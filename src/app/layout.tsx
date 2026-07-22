@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
 import Header from "@/components/Header";
+import { ClerkProvider } from "@clerk/nextjs";
 
 const lora = Lora({
   subsets: ["latin"],
@@ -19,7 +20,7 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Kompose AI App Builder",
+  title: "Kompose - AI App Builder",
   description: "AI-powered engine that builds production-ready apps and websites from simple prompts.",
 };
 
@@ -34,15 +35,17 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className={`${lora.variable} ${dmSans.variable} font-sans`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <Header />
-          <main>{children}</main>
-        </ThemeProvider>
+        <ClerkProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+            >
+            <Header />
+            <main>{children}</main>
+          </ThemeProvider>
+        </ClerkProvider>
       </body>
     </html>
   );
