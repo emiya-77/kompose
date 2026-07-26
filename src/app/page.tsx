@@ -17,6 +17,7 @@ import {
   SectionLabel,
 } from "@/components/reusables";
 import { BubbleBackground } from "@/components/animate-ui/components/backgrounds/bubble";
+import Image from "next/image";
 
 export default function LandingPage() {
   const { isSignedIn, has } = useAuth();
@@ -75,7 +76,13 @@ export default function LandingPage() {
       <section className="relative flex flex-col items-center overflow-hidden px-4 pb-24 pt-40 text-center">
         <BubbleBackground
           colors={greenColors}
-          className="absolute top-0 left-0 h-full w-full bg-gradient-to-br from-[#020617] via-[#0B1120] to-[#111827]"
+          className="absolute inset-0 h-full w-full bg-gradient-to-br from-[#020617] via-[#0B1120] to-[#111827]"
+          style={{
+            maskImage:
+              "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)",
+            WebkitMaskImage:
+              "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)",
+          }}
         />
 
         <Badge variant="outline" className="gap-2 p-4 backdrop-blur-sm">
@@ -517,6 +524,47 @@ export default function LandingPage() {
           })}
         </div>
       </section>
+
+
+      <section className="relative mx-auto mb-32 max-w-5xl overflow-hidden rounded-2xl border border-white/8 px-10 py-24 text-center">
+        <BubbleBackground
+          colors={greenColors}
+          className="absolute inset-0 h-full w-full bg-gradient-to-br from-[#020617] via-[#0B1120] to-[#111827] z-0"
+          style={{
+            maskImage:
+              "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)",
+            WebkitMaskImage:
+              "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)",
+          }}
+        />
+
+        <SectionHeading gray="Start building," blue="for free." />
+
+        <p className="mb-8 text-sm leading-relaxed text-white/40">
+          Get 10 free generations on sign up. No credit card required.
+          <br />
+          Upgrade when you&apos;re ready.
+        </p>
+
+        <SignInButton mode="modal">
+          <Button
+            size="lg"
+            className="relative h-11 rounded-full bg-white px-8"
+          >
+            Get started free
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </SignInButton>
+      </section>
+
+      <footer className="relative z-10 border-t border-white/7 py-2 mx-auto px-6 flex flex-wrap items-center justify-center text-xs text-stone-400 tracking-widest">
+        made 
+        {/* with 
+        <Image src="/image/img/potion.png" alt="heart" width={24} height={24}></Image> */}
+        &nbsp;by
+        <Image src="/image/img/scubbacat.gif" alt="heart" width={24} height={24}></Image>
+        & kib
+      </footer>
     </main>
   );
 }
