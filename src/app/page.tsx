@@ -1,7 +1,123 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth, SignInButton } from "@clerk/nextjs";
+import { CheckoutButton } from "@clerk/nextjs/experimental";
+import { ArrowRight, Zap, ChevronRight, Check } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { FEATURES, PLACEHOLDERS, STEPS, SUGGESTIONS } from "@/lib/data";
+import { PRICING_PLANS } from "@/lib/constants";
+import {
+  BlueTitle,
+  GrayTitle,
+  SectionHeading,
+  SectionLabel,
+} from "@/components/reusables";
+import { BubbleBackground } from "@/components/animate-ui/components/backgrounds/bubble";
+
+export default function LandingPage() {
+  const { isSignedIn, has } = useAuth();
+  const router = useRouter();
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const [prompt, setPrompt] = useState("");
+  const [placeholderIndex, setPlaceholderIndex] = useState(0);
+  const [isFocused, setIsFocused] = useState(false);
+
+  useEffect(() => {
+    if (isFocused || prompt) return;
+    const t = setInterval(() => {
+      setPlaceholderIndex((i) => (i + 1) % PLACEHOLDERS.length);
+    }, 3000);
+    return () => clearInterval(t);
+  }, [isFocused, prompt]);
+
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = Math.min(el.scrollHeight, 200) + "px";
+  }, [prompt]);
+
+  const handleSubmit = () => {
+    if (!prompt.trim() || !isSignedIn) return;
+    router.push(`/workspace?prompt=${encodeURIComponent(prompt.trim())}`);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit();
+    }
+  };
+
+  const handleSuggestion = (s: string) => {
+    setPrompt(s);
+    textareaRef.current?.focus();
+  };
+
+  const greenColors={
+    first: "59,130,246",    // Blue 500
+    second: "14,165,233",   // Sky
+    third: "6,182,212",     // Cyan
+    fourth: "37,99,235",    // Deep blue
+    fifth: "99,102,241",    // Indigo
+    sixth: "56,189,248",    // Light blue
+  }
+
   return (
-    <div></div>
+    <main className="min-h-screen bg-[#0a0a0a] selection:bg-white/20">
+      {/* Hero Section */}
+      <section className="relative flex flex-col items-center overflow-hidden px-4 pb-24 pt-40 text-center">
+        <BubbleBackground
+          colors={greenColors}
+          className="absolute top-0 left-0 h-full w-full bg-gradient-to-br from-[#020617] via-[#0B1120] to-[#111827]"
+        />
+
+        <Badge variant="outline" className="gap-2 p-4 backdrop-blur-sm">
+          <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
+          Powered by Agentic AI
+        </Badge>
+
+        <h1 className="mx-auto max-w-3xl text-balance font-serif text-5xl leading-tight tracking-tight sm:text-6xl lg:text-7xl z-10">
+          <GrayTitle>Kompose your dream</GrayTitle>
+          <br />
+          <BlueTitle>with a single prompt.</BlueTitle>
+        </h1>
+
+        <p className="mx-auto mt-6 max-w-xl text-balance text-base font-thin leading-relaxed tracking-wide text-white/40 z-10">
+          Describe what you want to build. AI writes the code, gets the
+          packages, and renders a live preview all inside your browser.
+        </p>
+
+        {/* Prompt Input */}
+        <div className="relative mx-auto mt-12 w-full max-w-2xl">
+          <div
+            className={cn(
+              "rounded-2xl border bg-[#111111] duration-200",
+              isFocused
+                ? "border-white/20 ring-1 ring-white/8"
+                : "border-white/8"
+            )}
+          >
+            <textarea
+              ref={textareaRef}
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              onKeyDown={handleKeyDown}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+              placeholder={PLACEHOLDERS[placeholderIndex]}
+              rows={1}
+              className="w-full resize-none bg-transparent px-5 pb-4 pt-5 text-sm placeholder:text-white/20 focus:outline-none sm:text-base font-thin"
+              style={{ minHeight: 56, maxHeight: 200 }}
+            />
+          </div>
+        </div>
+      </section>
+      </main>
   );
 }
